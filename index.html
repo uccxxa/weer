@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Independent Work Generator - Pro Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+                font-size: 16px;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 15px 20px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+                font-family: inherit;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus {
+                    outline: none;
+                    border-color: #667eea;
+                    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+                }
+
+        .btn-generate {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .btn-generate:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-generate:active {
+                transform: translateY(0);
+            }
+
+            .btn-generate:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+            .loading.active {
+                display: block;
+            }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .loading p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .result {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+            .result.active {
+                display: block;
+            }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .result p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .stats {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-word {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+            .features h3 {
+                color: white;
+                text-align: center;
+                margin-bottom: 25px;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+            .feature-item strong {
+                display: block;
+                color: #667eea;
+                margin-bottom: 8px;
+                font-size: 16px;
+            }
+
+            .feature-item span {
+                color: #666;
+                font-size: 14px;
+            }
+
+        .error {
+            display: none;
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            color: #c53030;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+            .error.active {
+                display: block;
+            }
+
+        .btn-new {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-new:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
+
+            .btn-download {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="badge">✨ AI-Powered</div>
+            <h1>🌌 INDEPENDENT WORK</h1>
+            <p>Generate Professional Documents with AI</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error" id="error"></div>
+
+        <!-- Form -->
+        <div class="form-container" id="formContainer">
+            <form id="generateForm">
+                <div class="form-group">
+                    <label>📖 Subject (Fan)</label>
+                    <input type="text" name="subject" placeholder="Enter subject name..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>📝 Topic (Mavzu)</label>
+                    <input type="text" name="topic" placeholder="Enter topic name..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>🎓 University</label>
+                    <input type="text" name="university" placeholder="University name..." value="TASHKENT STATE UNIVERSITY">
+                </div>
+
+                <div class="form-group">
+                    <label>🏛️ Faculty</label>
+                    <input type="text" name="faculty" placeholder="Faculty name..." value="FACULTY OF COMPUTER SCIENCE">
+                </div>
+
+                <div class="form-group">
+                    <label>📚 Department</label>
+                    <input type="text" name="department" placeholder="Department name..." value="DEPARTMENT OF ARTIFICIAL INTELLIGENCE">
+                </div>
+
+                <div class="form-group">
+                    <label>👨‍🎓 Student Name</label>
+                    <input type="text" name="student" placeholder="Your full name..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>👥 Group</label>
+                    <input type="text" name="group" placeholder="Group number..." value="125">
+                </div>
+
+                <div class="form-group">
+                    <label>📅 Course</label>
+                    <input type="text" name="course" placeholder="Course number..." value="3">
+                </div>
+
+                <div class="form-group">
+                    <label>👨‍🏫 Teacher Name</label>
+                    <input type="text" name="teacher" placeholder="Teacher's full name..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>🏙️ City</label>
+                    <input type="text" name="city" placeholder="City name..." value="TASHKENT">
+                </div>
+
+                <div class="form-group">
+                    <label>📊 English Level (CEFR)</label>
+                    <select name="cefr">
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2" selected>B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-generate" id="generateBtn">⚡ Generate Documents</button>
+            </form>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h2>Creating your documents...</h2>
+            <p>This may take 3-5 minutes</p>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result">
+            <div class="success-icon">✓</div>
+            <h2>Documents Ready!</h2>
+            <p>Your independent work has been successfully generated</p>
+
+            <div class="stats" id="stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalWords">0</div>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalChapters">0</div>
+                        <div class="stat-label">Chapters</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalImages">0</div>
+                        <div class="stat-label">Images</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="download-buttons">
+                <a href="#" class="btn-download btn-pdf" id="pdfLink" download>
+                    📄 Download PDF
+                </a>
+                <a href="#" class="btn-download btn-word" id="wordLink" download>
+                    📝 Download Word
+                </a>
+            </div>
+
+            <button class="btn-new" onclick="location.reload()">🔄 Create New Document</button>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <h3>✨ What's Included</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <strong>Detailed Introduction</strong>
+                    <span>Comprehensive overview</span>
+                </div>
+                <div class="feature-item">
+                    <strong>3 Main Chapters</strong>
+                    <span>In-depth analysis</span>
+                </div>
+                <div class="feature-item">
+                    <strong>AI-Generated Images</strong>
+                    <span>Visual illustrations</span>
+                </div>
+                <div class="feature-item">
+                    <strong>Conclusion & References</strong>
+                    <span>Complete academic work</span>
+                </div>
+                <div class="feature-item">
+                    <strong>Times New Roman 14pt</strong>
+                    <span>Academic formatting</span>
+                </div>
+                <div class="feature-item">
+                    <strong>PDF & Word Formats</strong>
+                    <span>Ready to use</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API_BASE - avtomatik aniqlash (Vercel/Render uchun)
+        const API_BASE = window.location.origin !== 'null' && window.location.origin !== 'file://'
+            ? window.location.origin
+            : 'http://localhost:8000';
+
+        console.log('API Base:', API_BASE);
+
+        document.getElementById('generateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('error');
+            const formContainer = document.getElementById('formContainer');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const generateBtn = document.getElementById('generateBtn');
+
+            errorDiv.classList.remove('active');
+            formContainer.style.display = 'none';
+            loading.classList.add('active');
+            result.classList.remove('active');
+            generateBtn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const resultData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(resultData.error || 'Generation failed');
+                }
+
+                loading.classList.remove('active');
+                result.classList.add('active');
+
+                // Statistika ko'rsatish
+                if (resultData.total_words) {
+                    document.getElementById('totalWords').textContent = resultData.total_words.toLocaleString();
+                }
+                if (resultData.chapters) {
+                    document.getElementById('totalChapters').textContent = resultData.chapters;
+                }
+                if (resultData.total_images !== undefined) {
+                    document.getElementById('totalImages').textContent = resultData.total_images;
+                }
+
+                // Download linklarni o'rnatish
+                document.getElementById('pdfLink').href = `${API_BASE}${resultData.pdf.url}`;
+                document.getElementById('pdfLink').download = resultData.pdf.name;
+
+                document.getElementById('wordLink').href = `${API_BASE}${resultData.word.url}`;
+                document.getElementById('wordLink').download = resultData.word.name;
+
+            } catch (error) {
+                console.error('Error:', error);
+                loading.classList.remove('active');
+                formContainer.style.display = 'block';
+                generateBtn.disabled = false;
+                errorDiv.textContent = `❌ ${error.message}. Please check your connection and try again.`;
+                errorDiv.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
